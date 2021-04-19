@@ -6,10 +6,15 @@ export function formatDate(time, fmt) {
   if (time === undefined || '') {
     return
   }
-  const date = new Date(time)
+  let time_str = time
+  if(time.toString().indexOf('-') === -1 || time.toString().indexOf('/')) {
+    time_str = time.toString().replace(/(\d{4})(\d{2})(\d{2})/g,'$1-$2-$3');
+  }
+  let date = new Date(time_str)
   if (/(y+)/.test(fmt)) {
     fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
   }
+
   const o = {
     'M+': date.getMonth() + 1,
     'd+': date.getDate(),
@@ -17,12 +22,14 @@ export function formatDate(time, fmt) {
     'm+': date.getMinutes(),
     's+': date.getSeconds()
   }
+
   for (const k in o) {
     if (new RegExp(`(${k})`).test(fmt)) {
       const str = o[k] + ''
       fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str))
     }
   }
+
   return fmt
 }
 

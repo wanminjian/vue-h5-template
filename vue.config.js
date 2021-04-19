@@ -4,37 +4,10 @@ const defaultSettings = require('./src/config/index.js')
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const resolve = dir => path.join(__dirname, dir)
-// page title
-const name = defaultSettings.title || 'vue mobile template'
-// 生产环境，测试和正式
+
+const name = defaultSettings.title || 'vue page'
 const IS_PROD = ['production', 'prod'].includes(process.env.NODE_ENV)
-// externals
-// const externals = {
-//   vue: 'Vue',
-//   'vue-router': 'VueRouter',
-//   vuex: 'Vuex',
-//   vant: 'vant',
-//   axios: 'axios'
-// }
-// CDN外链，会插入到index.html中
-// const cdn = {
-//   // 开发环境
-//   dev: {
-//     css: [],
-//     js: []
-//   },
-//   // 生产环境
-//   build: {
-//     css: ['https://cdn.jsdelivr.net/npm/vant@2.4.7/lib/index.css'],
-//     js: [
-//       'https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js',
-//       'https://cdn.jsdelivr.net/npm/vue-router@3.1.5/dist/vue-router.min.js',
-//       'https://cdn.jsdelivr.net/npm/axios@0.19.2/dist/axios.min.js',
-//       'https://cdn.jsdelivr.net/npm/vuex@3.1.2/dist/vuex.min.js',
-//       'https://cdn.jsdelivr.net/npm/vant@2.4.7/lib/index.min.js'
-//     ]
-//   }
-// }
+
 
 module.exports = {
   publicPath: './', // 署应用包时的基本 URL。 vue-router hash 模式使用
@@ -51,20 +24,9 @@ module.exports = {
       warnings: false,
       errors: true
     }
-    // proxy: {
-    //   //配置跨域
-    //   '/api': {
-    //       target: "https://test.xxx.com",
-    //       // ws:true,
-    //       changOrigin:true,
-    //       pathRewrite:{
-    //           '^/api':'/'
-    //       }
-    //   }
-    // }
   },
   css: {
-    extract: IS_PROD, // 是否将组件中的 CSS 提取至一个独立的 CSS 文件中 (而不是动态注入到 JavaScript 中的 inline 代码)。
+    extract: IS_PROD, //是否将组件中的 CSS 提取至一个独立的 CSS 文件中 (而不是动态注入到 JavaScript 中的 inline 代码)。
     sourceMap: false,
     loaderOptions: {
       scss: {
@@ -73,26 +35,18 @@ module.exports = {
         prependData: `
           @import "assets/css/mixin.scss";
           @import "assets/css/variables.scss";
-          $cdn: "${defaultSettings.$cdn}";
           `
       }
     }
   },
   configureWebpack: config => {
     config.name = name
-
-    // 为生产环境修改配置...
-    // if (IS_PROD) {
-    //   // externals
-    //   config.externals = externals
-    // }
   },
 
   chainWebpack: config => {
     config.plugins.delete('preload') // TODO: need test
     config.plugins.delete('prefetch') // TODO: need test
 
-    // 别名 alias
     config.resolve.alias
       .set('@', resolve('src'))
       .set('assets', resolve('src/assets'))
@@ -100,21 +54,7 @@ module.exports = {
       .set('views', resolve('src/views'))
       .set('components', resolve('src/components'))
 
-    /**
-     * 添加CDN参数到htmlWebpackPlugin配置中
-     */
-    // config.plugin('html').tap(args => {
-    //   if (IS_PROD) {
-    //     args[0].cdn = cdn.build
-    //   } else {
-    //     args[0].cdn = cdn.dev
-    //   }
-    //   return args
-    //  })
-
-    /**
-     * 设置保留空格
-     */
+  
     config.module
       .rule('vue')
       .use('vue-loader')
